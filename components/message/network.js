@@ -5,11 +5,12 @@ const controller = require('./controller')
 const response = require('../../network/response')
 
 router.get('/', (req, res) => {
-   controller.getMessage()
-   .then((messageList)=>{
-    response.success(req,res, 200, messageList)
-   })
-   .catch(e=>response.error(req,res,500,"Unexpected error",e))
+    const filterMessage = req.query.user || null
+    controller.getMessage(filterMessage)
+        .then((messageList) => {
+            response.success(req, res, 200, messageList)
+        })
+        .catch(e => response.error(req, res, 500, "Unexpected error", e))
 })
 
 router.post('/', (req, res) => {
@@ -24,5 +25,24 @@ router.post('/', (req, res) => {
 
 })
 
+router.patch('/:id', (req, res) => {
+    const id = req.params.id
+    const message = req.body
+
+    controller.updateMessage(id, message)
+        .then((data) => response.success(req, res, 200, data))
+        .catch(e => response.error(req, res, 500, "Error interno", e))
+})
+
+
+router.delete('/:id', function (req, res) {
+    controller.deleteMessage(req.params.id)
+        .then(() => {
+            response.success(req, res, 200, `Mensaje ${req.params.id} eliminado`,);
+        })
+        .catch(e => {
+            response.error(req, res, 500, 'Error interno', e);
+        });
+});
 
 module.exports = router
