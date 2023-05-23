@@ -1,28 +1,24 @@
-const db = require('mongoose')
 const Model = require('./model')
-require('dotenv').config()
-
-const url = process.env.MONGO_URI
-
-db.Promise = global.Promise
-db.connect(url, {
-    useNewUrlParser: true
-})
-console.log("[db] Conectada con exito");
 
 function addMessage(message) {
     const myMessage = new Model(message)
     myMessage.save()
 }
 
-async function getMessage(filterUser) {
-    let filter = {}
+async function getMessages(filterUser) {
 
+    let filter = {};
     if (filterUser !== null) {
-        filter = { user: filterUser }
+        filter = { user: filterUser };
     }
-    const messages = await Model.find(filter)
-    return messages;
+    try {
+        const populated = await Model.find(filter).populate('user')
+        return populated
+    } catch (error) {
+        throw error
+    }
+
+
 }
 
 
@@ -45,4 +41,9 @@ async function removeMessage(id) {
 
 }
 
-module.exports = { add: addMessage, list: getMessage, update: updateMessage, remove: removeMessage }
+module.exports = {
+    add: addMessage,
+    list: getMessages,
+    update: updateMessage,
+    remove: removeMessage
+}
