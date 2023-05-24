@@ -2,21 +2,23 @@ const express = require('express')
 const app = express()
 const server = require('http').Server(app)
 
+const cors = require('cors')
 const bodyParser = require('body-parser')
 const socket = require('./socket')
 const db = require('./db')
 const router = require('./network/routers')
-require('dotenv').config()
+const config = require('./config')
 
-const url = process.env.MONGO_URI
-db(url)
+
+db(config.dburl)
+app.use(cors())
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 
 socket.connect(server)
 router(app)
-app.use('/app', express.static('public'))
+app.use(`/${config.publicRoute}`, express.static('public'))
 
-server.listen('3000', () => {
+server.listen(config.port, () => {
     console.log("Escuchando el puerto 3000")
 })
