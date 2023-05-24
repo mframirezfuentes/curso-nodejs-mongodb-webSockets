@@ -5,7 +5,7 @@ const router = express.Router()
 const controller = require('./controller')
 
 const upload = multer({
-    dest: 'uploads/'
+    dest: 'public/files'
 })
 
 router.get('/', (req, res) => {
@@ -19,10 +19,10 @@ router.get('/', (req, res) => {
 })
 
 router.post('/', upload.single('file'), (req, res) => {
-
+    const file = req.file
     const body = req.body
-    controller.addMessage(body.chat, body.user, body.message).then(() => {
-        response.success(req, res, 201, "Creado correctamente")
+    controller.addMessage(body.chat, body.user, body.message, file).then((data) => {
+        response.success(req, res, 201, data)
     }).catch(() => {
         response.error(req, res, 400, "error en el controllador")
     })

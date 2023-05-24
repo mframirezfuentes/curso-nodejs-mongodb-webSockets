@@ -15,7 +15,8 @@ const mySchema = new Schema({
         type: String,
         required: String
     },
-    date: Date
+    date: Date,
+    file: String
 })
 
 const model = mongoose.model("Message", mySchema)
