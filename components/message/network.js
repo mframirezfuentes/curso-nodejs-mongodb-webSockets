@@ -5,7 +5,8 @@ const controller = require('./controller')
 const response = require('../../network/response')
 
 router.get('/', (req, res) => {
-    const filterMessage = req.query.user || null
+    const filterMessage = req.query.chat || null;
+    console.log(filterMessage);
     controller.getMessage(filterMessage)
         .then((messageList) => {
             response.success(req, res, 200, messageList)
@@ -16,8 +17,7 @@ router.get('/', (req, res) => {
 router.post('/', (req, res) => {
 
     const body = req.body
-
-    controller.addMessage(body.user, body.message).then(() => {
+    controller.addMessage(body.chat, body.user, body.message).then(() => {
         response.success(req, res, 201, "Creado correctamente")
     }).catch(() => {
         response.error(req, res, 400, "error en el controllador")
